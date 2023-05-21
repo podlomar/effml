@@ -1,0 +1,31 @@
+{
+  "name": "effml",
+  "version": "1.0.0",
+  "description": "Efficient Markup Language for document interchange",
+  "main": "dist/index.js",
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w",
+    "test": "mocha",
+    "prepublishOnly": "npm run build && npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/podlomar/ladin.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/podlomar/ladin/issues"
+  },
+  "homepage": "https://github.com/podlomar/ladin#readme",
+  "devDependencies": {
+    "@tsconfig/node18": "^2.0.1",
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "typescript": "^5.0.4"
+  }
+}
