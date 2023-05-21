@@ -6,7 +6,8 @@
   "type": "module",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "clean": "rimraf dist",
+    "build": "npm run clean && tsc",
     "dev": "tsc -w",
     "test": "mocha",
     "prepublishOnly": "npm run build && npm run test"
@@ -16,8 +17,11 @@
     "url": "git+https://github.com/podlomar/ladin.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": {
+    "name": "podlomar",
+    "email": "podlouckymartin@gmail.com"
+  },
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/podlomar/ladin/issues"
   },
@@ -26,6 +30,7 @@
     "@tsconfig/node18": "^2.0.1",
     "chai": "^4.3.7",
     "mocha": "^10.2.0",
+    "rimraf": "^5.0.1",
     "typescript": "^5.0.4"
   }
 }
