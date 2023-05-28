@@ -69,19 +69,22 @@ export function* tokenize(input: string): Generator<Token> {
       pos++;
       column++;
     } else if (char === `'`) {
-      const quoteEnd = input.indexOf(`'`, pos + 1);
-      const value = input.slice(pos + 1, quoteEnd);
+      let quotePos = input.indexOf(`'`, pos + 1);
+      while (quotePos !== -1 && input[quotePos - 1] === '\\') {
+        quotePos = input.indexOf(`'`, quotePos + 1);
+      }
+      const value = input.slice(pos + 1, quotePos).replace(/\\'/g, `'`);
 
       yield {
         type: TokenType.Text,
         value,
         start: pos,
-        end: quoteEnd,
+        end: quotePos,
         line,
         column,
       };
 
-      pos = quoteEnd + 1;
+      pos = quotePos + 1;
       column += value.length + 2;
     } else {
       currentName += char;
