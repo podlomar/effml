@@ -1,6 +1,6 @@
 doctype 'html'
 head {
-  title 'Page Title'
+  title 'Page\'s Title'
   meta {
     charset 'UTF-8'
   }
@@ -21,8 +21,8 @@ body {
     'Hello, World!'
   }
   p {
-    'This is an example HTML document.'
-    'Another paragraph line.'
+    'This is an example EffML document.'
+    'It\'s awesome!'
     div {
       'Some text inside a div.'
     }

@@ -5,7 +5,7 @@ EffML is a lightweight and efficient data format for working with structured doc
 ```
 doctype 'html'
 head {
-  title 'Page Title'
+  title 'Page\'s Title'
   meta { charset 'UTF-8' }
   meta { viewport 'width=device-width, initial-scale=1.0' }
   link { rel 'stylesheet' href 'styles.css' }
@@ -14,8 +14,8 @@ head {
 body {
   h1 { 'Hello, World!' }
   p {
-    'This is an example HTML document.'
-    'Another paragraph line.'
+    'This is an example EffML document.'
+    'It\'s awesome!'
     div {
       'Some text inside a div.'
     }

@@ -7,7 +7,7 @@ export const sampleDocumnet = {
       type: 'element',
       tagName: 'head',
       attributes: {
-        title: 'Page Title',
+        title: 'Page\'s Title',
       },
       nodes: [
         { 
@@ -59,11 +59,11 @@ export const sampleDocumnet = {
           nodes: [
             {
               type: 'text',
-              value: 'This is an example HTML document.',
+              value: 'This is an example EffML document.',
             },
             {
               type: 'text',
-              value: 'Another paragraph line.',
+              value: 'It\'s awesome!',
             },
             { 
               type: 'element',

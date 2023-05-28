@@ -22,12 +22,12 @@ const stringifyContent = (
   const indt = printType === 'pretty' ? indent(indentLevel) : '';
 
   for (const [key, value] of Object.entries(attributes)) {
-    result += `${indt}${key}${sp}'${value}'${nl}`;
+    result += `${indt}${key}${sp}'${value.replace("'", "\\'")}'${nl}`;
   }
 
   for (const node of nodes) {
     if (node.type === 'text') {
-      result += `${indt}'${node.value}'${nl}`;
+      result += `${indt}'${node.value.replace("'", "\\'")}'${nl}`;
     } else {
       result += `${indt}${node.tagName}${sp}{${nl}`;
       result += stringifyContent(node.attributes, node.nodes, indentLevel + 1, printType);
