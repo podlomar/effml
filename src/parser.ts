@@ -1,52 +1,62 @@
-import { Attributes, EffmlDocument, ElementNode, Node } from "./ast";
+import { tokenize, TokenType, Token } from "./lexer.js";
+import { Attributes, EffmlDocument, ElementNode, Node } from "./ast.js";
+import { isParsingError, ParsingError, errors } from "./errors.js";
 
-export const parseContent = (input: string): [Attributes, Node[], number] => {
+export const parseContent = (tokens: Generator<Token>): [Attributes, Node[]] | ParsingError => {
   const nodes: Node[] = [];
   const attributes: Attributes = {};
-  let currentText = '';
-  let i = 0;
   
-  while(i < input.length) {
-    const char = input[i];
-    
-    if (char === '\'') {
-      const quoteEnd = input.indexOf('\'', i + 1);
-      const value = input.slice(i + 1, quoteEnd);
+  let current = tokens.next();
+  while(!current.done) {
+    const token = current.value;
+    if (token.type === TokenType.Name) {
+      const next = tokens.next();
 
-      if (currentText.length === 0) {  
-        nodes.push({ type: 'text', value });
-      } else {
-        attributes[currentText] = value;
-        currentText = '';
+      if (next.done) {
+        return errors.unexpectedEof(token.line, token.column);
       }
 
-      i = quoteEnd + 1;
-    } else if (char === '{') {
-      const [attrs, children, end] = parseContent(input.slice(i + 1));
-      const element: ElementNode = { 
-        type: 'element',
-        tagName: currentText.trim(),
-        attributes: attrs,
-        nodes: children,
-      };
-    
-      nodes.push(element);
-      currentText = '';
-      i += end + 1;
-    } else if (char === '}') {
-      return [attributes, nodes, i + 1];
-    } else if (!/\s/.test(char)) {
-      currentText += char;
-      i++;
+      const nextToken = next.value;
+      if (nextToken.type === TokenType.Text) {
+        attributes[token.value] = nextToken.value;
+      } else if (nextToken.type === TokenType.OpenBrace) {
+        const result = parseContent(tokens);
+        if (isParsingError(result)) {
+          return result;
+        }
+        const [attrs, children] = result;
+        const element: ElementNode = {
+          type: 'element',
+          tagName: token.value,
+          attributes: attrs,
+          nodes: children,
+        };
+        nodes.push(element);
+      } else {
+        return errors.unexpectedToken(nextToken.line, nextToken.column, nextToken.value);
+      }
+    } else if (token.type === TokenType.Text) {
+      nodes.push({ type: 'text', value: token.value });
+    } else if (token.type === TokenType.CloseBrace) {
+      return [attributes, nodes];
     } else {
-      i++;
+      return errors.unexpectedToken(token.line, token.column, token.value);
     }
+
+    current = tokens.next();
   }
 
-  return [attributes, nodes, i];
+  return [attributes, nodes];
 };
 
-export const parseEffml = (input: string): EffmlDocument => {
-  const [attributes, nodes] = parseContent(input);
+export const parseEffml = (input: string): EffmlDocument | ParsingError => {
+  const tokenized = tokenize(input);
+  const result = parseContent(tokenized);
+
+  if (isParsingError(result)) {
+    return result;
+  }
+
+  const [attributes, nodes] = result;
   return { attributes, nodes };
 }

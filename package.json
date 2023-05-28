@@ -32,5 +32,9 @@
     "mocha": "^10.2.0",
     "rimraf": "^5.0.1",
     "typescript": "^5.0.4"
-  }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ]
 }

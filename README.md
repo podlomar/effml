@@ -31,7 +31,7 @@ body {
 
 Key points of the language design:
 
-* Extremely **simple and straightforward* with just a few syntax rules without any exceptions.
-* Does not use any unnecessary characters such as equal signs for attributes
+* Extremely **simple and straightforward** with just a few syntax rules without any exceptions.
+* Does not use any unnecessary characters such as equal signs for attributes etc.
 * Does not rely on whitespace in any way. 
 * Super simple parsing.
