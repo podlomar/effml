@@ -75,4 +75,15 @@ describe('Tokenize', () => {
 
     expect(result).to.deep.equal(expectedTokens);
   });
+
+  it('should handle invalid names', () => {
+    const input = "3hello/world: '123'";
+
+    const result = Array.from(tokenize(input));
+    const expectedTokens = [
+      { code: 'invalid-token', message: 'Invalid token 3hello/world:', column: 1, line: 1 },
+    ];
+
+    expect(result).to.deep.equal(expectedTokens);
+  });
 });

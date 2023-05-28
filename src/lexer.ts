@@ -1,3 +1,5 @@
+import { errors, ParsingError } from "./errors.js";
+
 export enum TokenType {
   Name = 0,
   Text = 1,
@@ -16,7 +18,11 @@ export type Token = {
 
 const DELIMITER = /[\s{}']/;
 
-export function* tokenize(input: string): Generator<Token> {
+const NAME_START_CHAR = /[:A-Z_a-z\xc0-\xd6\xd8-\xff]/;
+const NAME_CHAR = new RegExp(`${NAME_START_CHAR.source}|[-.0-9\\xb7]`);
+const NAME = new RegExp(`^${NAME_START_CHAR.source}(${NAME_CHAR.source})*\$`);
+
+export function* tokenize(input: string): Generator<Token | ParsingError> {
   let pos = 0;
   let line = 1;
   let column = 1;
@@ -27,15 +33,20 @@ export function* tokenize(input: string): Generator<Token> {
 
     if (DELIMITER.test(char)) {
       if (currentName.length > 0) {
-        yield {
-          type: TokenType.Name,
-          value: currentName,
-          start: pos - currentName.length,
-          end: pos - 1,
-          line,
-          column: column - currentName.length,
-        };
-        currentName = '';
+        if (NAME.test(currentName)) {
+          yield {
+            type: TokenType.Name,
+            value: currentName,
+            start: pos - currentName.length,
+            end: pos - 1,
+            line,
+            column: column - currentName.length,
+          };
+          currentName = '';
+        } else {
+          yield errors.invalidToken(line, column - currentName.length, currentName);
+          return;
+        }
       }
     }
 

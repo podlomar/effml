@@ -2,13 +2,19 @@ import { tokenize, TokenType, Token } from "./lexer.js";
 import { Attributes, EffmlDocument, ElementNode, Node } from "./ast.js";
 import { isParsingError, ParsingError, errors } from "./errors.js";
 
-export const parseContent = (tokens: Generator<Token>): [Attributes, Node[]] | ParsingError => {
+export const parseContent = (
+  tokens: Generator<Token | ParsingError>
+): [Attributes, Node[]] | ParsingError => {
   const nodes: Node[] = [];
   const attributes: Attributes = {};
   
   let current = tokens.next();
   while(!current.done) {
     const token = current.value;
+    if (isParsingError(token)) {
+      return token;
+    }
+
     if (token.type === TokenType.Name) {
       const next = tokens.next();
 
@@ -17,6 +23,10 @@ export const parseContent = (tokens: Generator<Token>): [Attributes, Node[]] | P
       }
 
       const nextToken = next.value;
+      if (isParsingError(nextToken)) {
+        return nextToken;
+      }
+      
       if (nextToken.type === TokenType.Text) {
         attributes[token.value] = nextToken.value;
       } else if (nextToken.type === TokenType.OpenBrace) {

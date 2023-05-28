@@ -26,4 +26,10 @@ export const errors: ParsingErrors = {
     line,
     column,
   }),
+  invalidToken: (line, column, token: string) => ({
+    code: 'invalid-token',
+    message: `Invalid token ${token}`,
+    line,
+    column,
+  }),
 };
