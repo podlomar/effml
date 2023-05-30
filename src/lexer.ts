@@ -18,33 +18,105 @@ export type Token = {
 
 const DELIMITER = /[\s{}']/;
 
+enum State {
+  Content = 0,
+  Text = 1,
+}
+
 const NAME_START_CHAR = /[:A-Z_a-z\xc0-\xd6\xd8-\xff]/;
 const NAME_CHAR = new RegExp(`${NAME_START_CHAR.source}|[-.0-9\\xb7]`);
 const NAME = new RegExp(`^${NAME_START_CHAR.source}(${NAME_CHAR.source})*\$`);
 
 export function* tokenize(input: string): Generator<Token | ParsingError> {
+  let state: State = State.Content;
+  let stateStart = {
+    pos: 0,
+    line: 1,
+    column: 1,
+  };
   let pos = 0;
   let line = 1;
   let column = 1;
-  let currentName = '';
+  let currentText = '';
 
   while (pos < input.length) {
     const char = input[pos];
 
+    if (state === State.Text) {
+      if (char === '\\') {
+        const nextChar = input[pos + 1];
+        if (nextChar === 'n') {
+          currentText += '\n';
+          pos += 2;
+          column += 2;
+        } else if (nextChar === 't') {
+          currentText += '\t';
+          pos += 2;
+          column += 2;
+        } else if (nextChar === 'r') {
+          currentText += '\r';
+          pos += 2;
+          column += 2;
+        } else if (nextChar === 'f') {
+          currentText += '\f';
+          pos += 2;
+          column += 2;
+        } else if (nextChar === 'b') {
+          currentText += '\b';
+          pos += 2;
+          column += 2;
+        } else if (nextChar === '\\') {
+          currentText += '\\';
+          pos += 2;
+          column += 2;
+        } else if (nextChar === '\'') {
+          currentText += '\'';
+          pos += 2;
+          column += 2;
+        } else {
+          yield errors.invalidEscapeSequence(line, column, nextChar);
+          return;
+        }
+      } else if (char === '\'') {
+        yield {
+          type: TokenType.Text,
+          value: currentText,
+          start: stateStart.pos,
+          end: pos,
+          line: stateStart.line,
+          column: stateStart.column,
+        };
+        currentText = '';
+        state = State.Content;
+        pos++;
+        column++;
+        stateStart = {
+          pos,
+          line,
+          column,
+        };
+      } else {
+        currentText += char;
+        pos++;
+        column++;
+      }
+      continue;
+    }
+
     if (DELIMITER.test(char)) {
-      if (currentName.length > 0) {
-        if (NAME.test(currentName)) {
+      if (currentText.length > 0) {
+        if (NAME.test(currentText)) {
           yield {
             type: TokenType.Name,
-            value: currentName,
-            start: pos - currentName.length,
+            value: currentText,
+            start: pos - currentText.length,
             end: pos - 1,
             line,
-            column: column - currentName.length,
+            column: column - currentText.length,
           };
-          currentName = '';
+          currentText = '';
         } else {
-          yield errors.invalidToken(line, column - currentName.length, currentName);
+          yield errors.invalidToken(line, column - currentText.length, currentText);
           return;
         }
       }
@@ -80,25 +152,12 @@ export function* tokenize(input: string): Generator<Token | ParsingError> {
       pos++;
       column++;
     } else if (char === `'`) {
-      let quotePos = input.indexOf(`'`, pos + 1);
-      while (quotePos !== -1 && input[quotePos - 1] === '\\') {
-        quotePos = input.indexOf(`'`, quotePos + 1);
-      }
-      const value = input.slice(pos + 1, quotePos).replace(/\\'/g, `'`);
-
-      yield {
-        type: TokenType.Text,
-        value,
-        start: pos,
-        end: quotePos,
-        line,
-        column,
-      };
-
-      pos = quotePos + 1;
-      column += value.length + 2;
+      state = State.Text;
+      stateStart = { pos, line, column };
+      pos++;
+      column++;
     } else {
-      currentName += char;
+      currentText += char;
       pos++;
       column++;
     }

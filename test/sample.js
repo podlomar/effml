@@ -25,7 +25,7 @@ export const sampleDocumnet = {
         { 
           type: 'element',
           tagName: 'link',
-          attributes: { rel: 'stylesheet', href: 'styles.css' },
+          attributes: { rel: 'stylesheet', href: 'assets\\styles.css' },
           nodes: [],
         },
         { 
@@ -59,7 +59,7 @@ export const sampleDocumnet = {
           nodes: [
             {
               type: 'text',
-              value: 'This is an example EffML document.',
+              value: 'This is an example\nEffML document.',
             },
             {
               type: 'text',
@@ -72,7 +72,7 @@ export const sampleDocumnet = {
               nodes: [
                 {
                   type: 'text',
-                  value: 'Some text inside a div.',
+                  value: 'Some\ttext\rinside\fa\bdiv.',
                 }
               ],
             },

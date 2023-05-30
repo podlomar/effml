@@ -9,7 +9,7 @@ head {
   }
   link {
     rel 'stylesheet'
-    href 'styles.css'
+    href 'assets\\styles.css'
   }
   link {
     rel 'icon'
@@ -21,10 +21,10 @@ body {
     'Hello, World!'
   }
   p {
-    'This is an example EffML document.'
+    'This is an example\nEffML document.'
     'It\'s awesome!'
     div {
-      'Some text inside a div.'
+      'Some\ttext\rinside\fa\bdiv.'
     }
   }
   img {
