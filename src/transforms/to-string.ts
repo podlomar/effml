@@ -1,12 +1,14 @@
-import { Attributes, EffmlDocument, Node } from './ast.js';
+import { Attributes, EffmlDocument, Node } from '../ast.js';
 
 const indent = (level: number): string => '  '.repeat(level);
 
-type PrintType = 'pretty' | 'minify';
+type FormatType = 'pretty' | 'minify';
 
-export const effmlStringify = (document: EffmlDocument, printType: PrintType = 'pretty'): string => {
-  const { attributes, nodes } = document;
-  return stringifyContent(attributes, nodes, 0, printType);
+export const documentToString = (
+  document: EffmlDocument, printType: FormatType = 'pretty'
+): string => {
+  const { attrs, nodes } = document;
+  return stringifyContent(attrs, nodes, 0, printType);
 };
 
 const escapeChars: { [key: string]: string } = {
@@ -24,10 +26,10 @@ const ESCAPE_REGEX = /[\n\t\r\f\b\\']/g;
 const escape = (matched: string): string => escapeChars[matched];
 
 const stringifyContent = (
-  attributes: Attributes,
+  attrs: Attributes,
   nodes: Node[],
   indentLevel: number,
-  printType: PrintType,
+  printType: FormatType,
 ): string => {
   let result = '';
 
@@ -35,7 +37,7 @@ const stringifyContent = (
   const sp = printType === 'pretty' ? ' ' : '';
   const indt = printType === 'pretty' ? indent(indentLevel) : '';
 
-  for (const [key, value] of Object.entries(attributes)) {
+  for (const [key, value] of Object.entries(attrs)) {
     result += `${indt}${key}${sp}'${value.replace(ESCAPE_REGEX, escape)}'${nl}`;
   }
 
@@ -43,8 +45,8 @@ const stringifyContent = (
     if (node.type === 'text') {
       result += `${indt}'${node.value.replace(ESCAPE_REGEX, escape)}'${nl}`;
     } else {
-      result += `${indt}${node.tagName}${sp}{${nl}`;
-      result += stringifyContent(node.attributes, node.nodes, indentLevel + 1, printType);
+      result += `${indt}${node.name}${sp}{${nl}`;
+      result += stringifyContent(node.attrs, node.nodes, indentLevel + 1, printType);
       result += `${indt}}${nl}`;
     }
   }

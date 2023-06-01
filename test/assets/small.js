@@ -1,50 +1,50 @@
 export const sampleDocumnet = {
-  attributes: {
+  attrs: {
     doctype: 'html',
   },
   nodes: [
     {
       type: 'element',
-      tagName: 'head',
-      attributes: {
+      name: 'head',
+      attrs: {
         title: 'Page\'s Title',
       },
       nodes: [
         { 
           type: 'element',
-          tagName: 'meta',
-          attributes: { charset: 'UTF-8' },
+          name: 'meta',
+          attrs: { charset: 'UTF-8' },
           nodes: [],
         },
         { 
           type: 'element',
-          tagName: 'meta',
-          attributes: { viewport: 'width=device-width, initial-scale=1.0' },
+          name: 'meta',
+          attrs: { viewport: 'width=device-width, initial-scale=1.0' },
           nodes: [],
         },
         { 
           type: 'element',
-          tagName: 'link',
-          attributes: { rel: 'stylesheet', href: 'assets\\styles.css' },
+          name: 'link',
+          attrs: { rel: 'stylesheet', href: 'assets\\styles.css' },
           nodes: [],
         },
         { 
           type: 'element',
-          tagName: 'link',
-          attributes: { rel: 'icon', href: 'favicon.ico' },
+          name: 'link',
+          attrs: { rel: 'icon', href: 'favicon.ico' },
           nodes: [],
         },
       ],
     },
     {
       type: 'element',
-      tagName: 'body',
-      attributes: {},
+      name: 'body',
+      attrs: {},
       nodes: [
         { 
           type: 'element',
-          attributes: {},
-          tagName: 'h1',
+          attrs: {},
+          name: 'h1',
           nodes: [
             {
               type: 'text',
@@ -54,8 +54,8 @@ export const sampleDocumnet = {
         },
         { 
           type: 'element', 
-          attributes: {},
-          tagName: 'p',
+          attrs: {},
+          name: 'p',
           nodes: [
             {
               type: 'text',
@@ -67,8 +67,8 @@ export const sampleDocumnet = {
             },
             { 
               type: 'element',
-              attributes: {},
-              tagName: 'div',
+              attrs: {},
+              name: 'div',
               nodes: [
                 {
                   type: 'text',
@@ -80,8 +80,8 @@ export const sampleDocumnet = {
         },
         {
           type: 'element',
-          tagName: 'img',
-          attributes: {
+          name: 'img',
+          attrs: {
             src: 'image.jpg',
             alt: 'Sample Image',
           },

@@ -1,18 +1,18 @@
 import { promises as fs } from 'fs';
 import { expect } from 'chai';
-import { parseEffml } from '../dist/parser.js';
-import { sampleDocumnet } from './sample.js';
+import { parseToAst } from '../dist/index.js';
+import { sampleDocumnet } from './assets/small.js';
 
-const sampleInput = await fs.readFile('./test/sample.effml', 'utf-8');
-const sampleInputMin = await fs.readFile('./test/sample.min.effml', 'utf-8');
+const sampleInput = await fs.readFile('./test/assets/small.effml', 'utf-8');
+const sampleInputMin = await fs.readFile('./test/assets/small.min.effml', 'utf-8');
 
 describe('Effml Parser', () => {
   it('should handle empty input', () => {
     const input = '';
-    const result = parseEffml(input);
+    const result = parseToAst(input);
 
     expect(result).to.deep.equal({
-      attributes: {},
+      attrs: {},
       nodes: [],
     });
   });
@@ -20,10 +20,10 @@ describe('Effml Parser', () => {
   it('should handle input with only whitespace characters', () => {
     const input = '      \t\n  ';
 
-    const result = parseEffml(input);
+    const result = parseToAst(input);
 
     expect(result).to.deep.equal({
-      attributes: {},
+      attrs: {},
       nodes: [],
     });
   });
@@ -31,10 +31,10 @@ describe('Effml Parser', () => {
   it('should handle input with only text content', () => {
     const input = `'Hello, World!'`;
 
-    const result = parseEffml(input);
+    const result = parseToAst(input);
 
     expect(result).to.deep.equal({
-      attributes: {},
+      attrs: {},
       nodes: [
         { type: 'text', value: 'Hello, World!' },
       ],
@@ -44,13 +44,13 @@ describe('Effml Parser', () => {
   it('should handle input with empty elements', () => {
     const input = 'element1 {} element2 {}';
 
-    const result = parseEffml(input);
+    const result = parseToAst(input);
 
     expect(result).to.deep.equal({
-      attributes: {},
+      attrs: {},
       nodes: [
-        { type: 'element', tagName: 'element1', attributes: {}, nodes: [] },
-        { type: 'element', tagName: 'element2', attributes: {}, nodes: [] },
+        { type: 'element', name: 'element1', attrs: {}, nodes: [] },
+        { type: 'element', name: 'element2', attrs: {}, nodes: [] },
       ],
     });
   });
@@ -58,25 +58,25 @@ describe('Effml Parser', () => {
   it('should parse Effml content with nested elements', () => {
     const input = `div{p{span{'Hello'}}p{' World!'}}`;
 
-    const result = parseEffml(input);
+    const result = parseToAst(input);
 
     expect(result).to.deep.equal({
-      attributes: {},
+      attrs: {},
       nodes: [
         {
           type: 'element',
-          tagName: 'div',
-          attributes: {},
+          name: 'div',
+          attrs: {},
           nodes: [
             {
               type: 'element',
-              tagName: 'p',
-              attributes: {},
+              name: 'p',
+              attrs: {},
               nodes: [
                 {
                   type: 'element',
-                  tagName: 'span',
-                  attributes: {},
+                  name: 'span',
+                  attrs: {},
                   nodes: [
                     { type: 'text', value: 'Hello' },
                   ],
@@ -85,8 +85,8 @@ describe('Effml Parser', () => {
             },
             {
               type: 'element',
-              tagName: 'p',
-              attributes: {},
+              name: 'p',
+              attrs: {},
               nodes: [
                 { type: 'text', value: ' World!' },
               ],
@@ -98,12 +98,12 @@ describe('Effml Parser', () => {
   });
 
   it('should parse Effml content with elements and attributes', () => {
-    const result = parseEffml(sampleInput);
+    const result = parseToAst(sampleInput);
     expect(result).to.deep.equal(sampleDocumnet);
   });
 
   it('should parse minified Effml content with elements and attributes', () => {
-    const result = parseEffml(sampleInputMin);
+    const result = parseToAst(sampleInputMin);
     expect(result).to.deep.equal(sampleDocumnet);
   });
 });

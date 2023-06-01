@@ -1,4 +1,5 @@
 import { parseEffml } from "./parser.js";
-import { effmlStringify } from "./stringify.js";
+import { parseToAst } from "./ast.js";
+import { documentToString } from "./transforms/to-string.js";
 
-export { parseEffml, effmlStringify };
+export { parseEffml, parseToAst, documentToString };

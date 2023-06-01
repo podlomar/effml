@@ -1,12 +1,13 @@
 import { tokenize, TokenType, Token } from "./lexer.js";
-import { Attributes, EffmlDocument, ElementNode, Node } from "./ast.js";
 import { isParsingError, ParsingError, errors } from "./errors.js";
+import { Visitor } from "./visitor.js";
 
-export const parseContent = (
-  tokens: Generator<Token | ParsingError>
-): [Attributes, Node[]] | ParsingError => {
-  const nodes: Node[] = [];
-  const attributes: Attributes = {};
+const parseContent = <A, T, E, D>(
+  tokens: Generator<Token | ParsingError>,
+  visitor: Visitor<A, T, E, D>,
+): [A[], (T | E)[]] | ParsingError => {
+  const nodes: (T | E)[] = [];
+  const attributes: A[] = [];
   
   let current = tokens.next();
   while(!current.done) {
@@ -28,25 +29,19 @@ export const parseContent = (
       }
       
       if (nextToken.type === TokenType.Text) {
-        attributes[token.value] = nextToken.value;
+        attributes.push(visitor.attribute(token.value, nextToken.value));
       } else if (nextToken.type === TokenType.OpenBrace) {
-        const result = parseContent(tokens);
+        const result = parseContent(tokens, visitor);
         if (isParsingError(result)) {
           return result;
         }
         const [attrs, children] = result;
-        const element: ElementNode = {
-          type: 'element',
-          tagName: token.value,
-          attributes: attrs,
-          nodes: children,
-        };
-        nodes.push(element);
+        nodes.push(visitor.element(token.value, attrs, children));
       } else {
         return errors.unexpectedToken(nextToken.line, nextToken.column, nextToken.value);
       }
     } else if (token.type === TokenType.Text) {
-      nodes.push({ type: 'text', value: token.value });
+      nodes.push(visitor.text(token.value));
     } else if (token.type === TokenType.CloseBrace) {
       return [attributes, nodes];
     } else {
@@ -59,14 +54,16 @@ export const parseContent = (
   return [attributes, nodes];
 };
 
-export const parseEffml = (input: string): EffmlDocument | ParsingError => {
+export const parseEffml = <A, T, E, D>(
+  input: string, visitor: Visitor<A, T, E, D
+>): D | ParsingError => {
   const tokenized = tokenize(input);
-  const result = parseContent(tokenized);
+  const result = parseContent(tokenized, visitor);
 
   if (isParsingError(result)) {
     return result;
   }
 
-  const [attributes, nodes] = result;
-  return { attributes, nodes };
+  const [attrs, nodes] = result;
+  return visitor.document(attrs, nodes);
 }
