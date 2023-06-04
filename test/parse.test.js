@@ -1,10 +1,10 @@
 import { promises as fs } from 'fs';
 import { expect } from 'chai';
 import { parseToAst } from '../dist/index.js';
-import { sampleDocumnet } from './assets/small.js';
 
 const sampleInput = await fs.readFile('./test/assets/small.effml', 'utf-8');
 const sampleInputMin = await fs.readFile('./test/assets/small.min.effml', 'utf-8');
+const sampleAst = JSON.parse(await fs.readFile('./test/assets/small.json', 'utf-8'));
 
 describe('Effml Parser', () => {
   it('should handle empty input', () => {
@@ -99,11 +99,11 @@ describe('Effml Parser', () => {
 
   it('should parse Effml content with elements and attributes', () => {
     const result = parseToAst(sampleInput);
-    expect(result).to.deep.equal(sampleDocumnet);
+    expect(result).to.deep.equal(sampleAst);
   });
 
   it('should parse minified Effml content with elements and attributes', () => {
     const result = parseToAst(sampleInputMin);
-    expect(result).to.deep.equal(sampleDocumnet);
+    expect(result).to.deep.equal(sampleAst);
   });
 });

@@ -5,6 +5,7 @@ import { Visitor } from "./visitor.js";
 const parseContent = <A, T, E, D>(
   tokens: Generator<Token | ParsingError>,
   visitor: Visitor<A, T, E, D>,
+  level: number,
 ): [A[], (T | E)[]] | ParsingError => {
   const nodes: (T | E)[] = [];
   const attributes: A[] = [];
@@ -29,19 +30,19 @@ const parseContent = <A, T, E, D>(
       }
       
       if (nextToken.type === TokenType.Text) {
-        attributes.push(visitor.attribute(token.value, nextToken.value));
+        attributes.push(visitor.attribute(token.value, nextToken.value, level));
       } else if (nextToken.type === TokenType.OpenBrace) {
-        const result = parseContent(tokens, visitor);
+        const result = parseContent(tokens, visitor, level + 1);
         if (isParsingError(result)) {
           return result;
         }
         const [attrs, children] = result;
-        nodes.push(visitor.element(token.value, attrs, children));
+        nodes.push(visitor.element(token.value, attrs, children, level + 1));
       } else {
         return errors.unexpectedToken(nextToken.line, nextToken.column, nextToken.value);
       }
     } else if (token.type === TokenType.Text) {
-      nodes.push(visitor.text(token.value));
+      nodes.push(visitor.text(token.value, level));
     } else if (token.type === TokenType.CloseBrace) {
       return [attributes, nodes];
     } else {
@@ -58,7 +59,7 @@ export const parseEffml = <A, T, E, D>(
   input: string, visitor: Visitor<A, T, E, D
 >): D | ParsingError => {
   const tokenized = tokenize(input);
-  const result = parseContent(tokenized, visitor);
+  const result = parseContent(tokenized, visitor, 0);
 
   if (isParsingError(result)) {
     return result;

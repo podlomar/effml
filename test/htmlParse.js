@@ -1,10 +1,11 @@
 import { promises as fs } from 'fs';
 import { parse, walk, SyntaxKind } from 'html5parser';
+import { decode } from 'html-entities';
 import { documentToString } from '../dist/transforms/to-string.js';
 
-const htmlContent = await fs.readFile('assets/big.html', 'utf8');
+const htmlContent = await fs.readFile('assets/small.html', 'utf8');
 
-const ast = parse(htmlContent);
+const ast = parse(htmlContent.trim());
 
 const contentStack = [{
   attrs: {},
@@ -24,7 +25,7 @@ walk(ast, {
       }
 
       const attrs = node.attributes.reduce((acc, attr) => {
-        acc[attr.name.value] = attr.value.value;
+        acc[attr.name.value] = decode(attr.value.value);
         return acc;
       }, {});
 
@@ -35,7 +36,11 @@ walk(ast, {
     }
     
     if (node.type === SyntaxKind.Text) {
-      currentContent.nodes.push({ type: 'text', value: node.value });
+      const trimmed = node.value.trim();
+      if (trimmed === '') {
+        return;
+      }
+      currentContent.nodes.push({ type: 'text', value: decode(trimmed) });
     }
   },
   leave: (node) => {
@@ -48,5 +53,5 @@ walk(ast, {
   }
 });
 
-// console.log(JSON.stringify(contentStack[0], null, 2));
-// console.log(documentToString(contentStack[0], 'minify'));
+console.log(JSON.stringify(contentStack[0], null, 2));
+console.log(documentToString(contentStack[0], 'pretty'));

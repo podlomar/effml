@@ -26,6 +26,9 @@
     "url": "https://github.com/podlomar/ladin/issues"
   },
   "homepage": "https://github.com/podlomar/ladin#readme",
+  "dependencies": {
+    "html-entities": "^2.3.3"
+  },
   "devDependencies": {
     "@tsconfig/node18": "^2.0.1",
     "chai": "^4.3.7",

@@ -1,0 +1,116 @@
+{
+  "attrs": {
+    "doctype": "html"
+  },
+  "nodes": [
+    {
+      "type": "element",
+      "name": "html",
+      "attrs": {},
+      "nodes": [
+        {
+          "type": "element",
+          "name": "head",
+          "attrs": {},
+          "nodes": [
+            {
+              "type": "element",
+              "name": "meta",
+              "attrs": {
+                "charset": "UTF-8"
+              },
+              "nodes": []
+            },
+            {
+              "type": "element",
+              "name": "meta",
+              "attrs": {
+                "name": "viewport",
+                "content": "width=device-width, initial-scale=1.0"
+              },
+              "nodes": []
+            },
+            {
+              "type": "element",
+              "name": "link",
+              "attrs": {
+                "rel": "stylesheet",
+                "href": "assets\\styles.css"
+              },
+              "nodes": []
+            },
+            {
+              "type": "element",
+              "name": "link",
+              "attrs": {
+                "rel": "icon",
+                "href": "favicon.ico"
+              },
+              "nodes": []
+            },
+            {
+              "type": "element",
+              "name": "title",
+              "attrs": {},
+              "nodes": [
+                {
+                  "type": "text",
+                  "value": "Page's Title"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "element",
+          "name": "body",
+          "attrs": {},
+          "nodes": [
+            {
+              "type": "element",
+              "name": "h1",
+              "attrs": {},
+              "nodes": [
+                {
+                  "type": "text",
+                  "value": "Hello, World!"
+                }
+              ]
+            },
+            {
+              "type": "element",
+              "name": "p",
+              "attrs": {},
+              "nodes": [
+                {
+                  "type": "text",
+                  "value": "It's awesome\n      EffML document."
+                },
+                {
+                  "type": "element",
+                  "name": "div",
+                  "attrs": {},
+                  "nodes": [
+                    {
+                      "type": "text",
+                      "value": "Some\tnasty\rpiece\fof\btext"
+                    }
+                  ]
+                },
+                {
+                  "type": "element",
+                  "name": "img",
+                  "attrs": {
+                    "src": "image.jpg",
+                    "alt": "Sample Image"
+                  },
+                  "nodes": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
