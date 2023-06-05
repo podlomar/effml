@@ -18,7 +18,7 @@ export const transformNode = <A, T, E, D>(
     return visitor.text(node.value, level);
   }
 
-  const attrs = transformAttrs(node.attrs, level, visitor);
+  const attrs = transformAttrs(node.attrs, level + 1, visitor);
   const nodes = node.nodes.map((node) => transformNode(node, level + 1, visitor));
   return visitor.element(node.name, attrs, nodes, level);
 };

@@ -27,7 +27,7 @@ export const documentToString = (
   const visitor: Visitor<string, string, string, string> = {
     attribute: (name, value, level) => indt(
       `${name}${sp}'${value.replace(ESCAPE_REGEX, escape)}'${nl}`,
-      level === 0 ? 0 : level + 1,
+      level,
     ),
     text: (value, level) => indt(`'${value.replace(ESCAPE_REGEX, escape)}'${nl}`, level),
     element: (name, attrs, nodes, level) => {

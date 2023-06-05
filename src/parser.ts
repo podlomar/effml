@@ -30,7 +30,7 @@ const parseContent = <A, T, E, D>(
       }
       
       if (nextToken.type === TokenType.Text) {
-        attributes.push(visitor.attribute(token.value, nextToken.value, level));
+        attributes.push(visitor.attribute(token.value, nextToken.value, level + 1));
       } else if (nextToken.type === TokenType.OpenBrace) {
         const result = parseContent(tokens, visitor, level + 1);
         if (isParsingError(result)) {

@@ -5,17 +5,18 @@ import { transformDocument } from './index.js';
 import { indent, PrintType } from './utils.js';
 
 const entities: { [key: string]: string } = {
-  '\t': '&Tab;',
   '\r': '&#xD;',
   '\f': '&#xC;',
   '\b': '&#x8;',
 };
 
-const ENTITIES_REGEX = /[\t\r\f\b]/g;
+const ENTITIES_REGEX = /[\r\f\b]/g;
 
 const replaceEntity = (matched: string): string => entities[matched];
 
-const encodeHtml = (value: string): string => encode(value).replace(ENTITIES_REGEX, replaceEntity);
+const encodeHtml = (value: string): string => encode(value.trim())
+  .replace(ENTITIES_REGEX, replaceEntity)
+  .replace(/\s+/g, ' ');
 
 export const documentToHtml = (
   document: EffmlDocument, printType: PrintType = 'pretty'
@@ -31,9 +32,12 @@ export const documentToHtml = (
       if (nodes.length === 0) {
         return indt(`<${name}${htmlAttrs} />`, level);
       } else {
-        const htmlNodes = nodes.join(nl);
+        const htmlNodes = nodes.reduce((result, node) => (
+          node === '' ? result : result + nl + node
+        ), '');
+
         return (
-          indt(`<${name}${htmlAttrs}>${nl}`, level) + 
+          indt(`<${name}${htmlAttrs}>`, level) + 
           `${htmlNodes}${nl}` +
           indt(`</${name}>`, level)
         );

@@ -1,11 +1,16 @@
 import { promises as fs } from 'fs';
 import { parse, walk, SyntaxKind } from 'html5parser';
 import { decode } from 'html-entities';
-import { documentToString } from '../dist/transforms/to-string.js';
+import { documentToString } from '../dist/transform/to-string.js';
+import { documentToHtml } from '../dist/transform/to-html.js';
 
-const htmlContent = await fs.readFile('assets/small.html', 'utf8');
+const inputFile = process.argv[2] ?? 'small';
+const output = process.argv[3] ?? 'string';
+const print = process.argv[4] ?? 'pretty';
 
-const ast = parse(htmlContent.trim());
+const input = await fs.readFile(`assets/${inputFile}.html`, 'utf8');
+
+const ast = parse(input.trim());
 
 const contentStack = [{
   attrs: {},
@@ -53,5 +58,12 @@ walk(ast, {
   }
 });
 
-console.log(JSON.stringify(contentStack[0], null, 2));
-console.log(documentToString(contentStack[0], 'pretty'));
+if (output === 'json') {
+  console.log(JSON.stringify(contentStack[0], null, 2));
+} else if (output === 'html') {
+  console.log(documentToHtml(contentStack[0], print));
+} else if (output === 'string'){
+  console.log(documentToString(contentStack[0], print));
+} else {
+  console.log('Unknown output type');
+}
